@@ -24,12 +24,6 @@ public class GlobalExceptionHandler {
         problemDetail.setDetail("An error occurred while processing the request.");
         return problemDetail;
     }
-    @ExceptionHandler (NumberFormatException.class)
-    public ProblemDetail handleNumberFormatException(NumberFormatException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        problemDetail.setDetail("Invalid number format.");
-        return problemDetail;
-    }
     @ExceptionHandler (StockNotFoundException.class)
     public ProblemDetail handleStockNotFoundException(StockNotFoundException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);

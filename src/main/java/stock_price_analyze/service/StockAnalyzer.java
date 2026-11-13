@@ -3,6 +3,8 @@ package stock_price_analyze.service;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import stock_price_analyze.model.StockPrice;
 
 import java.util.ArrayDeque;
@@ -10,7 +12,9 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 
+@Component
 public class StockAnalyzer {
+    
     public double findPriceByDate(List<StockPrice> stockPrices, String date) {
         // Hashmap
         HashMap<String, Double> map = new HashMap<>();
@@ -58,9 +62,6 @@ public class StockAnalyzer {
             windowSum += stockPrices.get(i).getPrice() - stockPrices.get(i - k).getPrice();
             bestSum = Math.max(bestSum, windowSum);
         }
-        if (windowSum > bestSum) {
-            bestSum = windowSum;
-        }
         return bestSum / k;
     }
 
@@ -82,5 +83,18 @@ public class StockAnalyzer {
             stack.push(i);
         }
         return result;
+    }
+
+    public double getAverage(List<StockPrice> stockPrices, int k) {
+        if (k <= 0 || k > stockPrices.size()) {
+            throw new IllegalArgumentException("Invalid value of k");
+        }
+
+        double sum = 0.0;
+        for (int i = 0; i < k; i++) {
+            sum += stockPrices.get(i).getPrice();
+        }
+
+        return sum / k;
     }
 }

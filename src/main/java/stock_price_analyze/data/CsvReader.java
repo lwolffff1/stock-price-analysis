@@ -7,9 +7,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.springframework.stereotype.Component;
 import stock_price_analyze.model.StockPrice;
-
+@Component
 public class CsvReader {
     public List<StockPrice> readCsv() throws IOException{
         List<StockPrice> stockPrices = new ArrayList<>();

@@ -5,30 +5,35 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import stock_price_analyze.client.StockApiClient;
 import stock_price_analyze.data.CsvReader;
 import stock_price_analyze.exception.StockNotFoundException;
 import stock_price_analyze.model.StockPrice;
 
 @Service // File Service có nhiệm vụ lấy dữ liệu từ Csv Reader và trả về dữ liệu cho Controller
 public class StockService {
+    private final StockAnalyzer stockAnalyzer;
+    private final CsvReader csvReader;
+    private final StockApiClient stockApiClient;
+
+    public StockService(StockAnalyzer stockAnalyzer, CsvReader csvReader, StockApiClient stockApiClient) {
+        this.stockAnalyzer = stockAnalyzer;
+        this.csvReader = csvReader;
+        this.stockApiClient = stockApiClient;
+    }
     public List<StockPrice> getAllStocks() throws IOException {
-        CsvReader csvReader = new CsvReader();
         return csvReader.readCsv();
     }
     public double getBestAverage(int k) throws IOException {
 
         List<StockPrice> stockPrices = getAllStocks();
-
-        StockAnalyzer analyzer = new StockAnalyzer();
-
-        return analyzer.bestAverage(stockPrices, k);
+        return stockAnalyzer.bestAverage(stockPrices, k);
     }
 
     public double getPriceByDate(String date) throws IOException {
-        StockAnalyzer analyzer = new StockAnalyzer();
         List<StockPrice> stockPrices = getAllStocks();
         try {
-            return analyzer.findPriceByDate(stockPrices, date);
+            return stockAnalyzer.findPriceByDate(stockPrices, date);
 
         } catch (IllegalArgumentException ex) {
             throw new StockNotFoundException(
@@ -37,4 +42,21 @@ public class StockService {
         }
     }
 
+    public double getAverage(int k) throws IOException {
+        List<StockPrice> stockPrices = getAllStocks();
+        return stockAnalyzer.getAverage(stockPrices, k);
+    }
+
+    public int binarySearchDate(String targetDate) throws IOException {
+        List<StockPrice> stockPrices = getAllStocks();
+        
+        return stockAnalyzer.binarySearchDate(stockPrices, targetDate);
+    }
+    public int[] getNextHigherPrice() throws IOException {
+        List<StockPrice> stockPrices = getAllStocks();
+        return stockAnalyzer.nextHigherPrice(stockPrices);
+    }
+    public String getLiveStockData(String symbol) {
+        return stockApiClient.fetchDailyStockData(symbol);
+    }
 }
