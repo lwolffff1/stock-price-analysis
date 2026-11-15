@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import stock_price_analyze.client.StockApiClient;
+import stock_price_analyze.client.StockJsonParser;
 import stock_price_analyze.data.CsvReader;
 import stock_price_analyze.exception.StockNotFoundException;
 import stock_price_analyze.model.StockPrice;
@@ -15,11 +16,13 @@ public class StockService {
     private final StockAnalyzer stockAnalyzer;
     private final CsvReader csvReader;
     private final StockApiClient stockApiClient;
+    private final StockJsonParser stockJsonParser;
 
     public StockService(StockAnalyzer stockAnalyzer, CsvReader csvReader, StockApiClient stockApiClient) {
         this.stockAnalyzer = stockAnalyzer;
         this.csvReader = csvReader;
         this.stockApiClient = stockApiClient;
+        this.stockJsonParser = new StockJsonParser(new tools.jackson.databind.json.JsonMapper());
     }
     public List<StockPrice> getAllStocks() throws IOException {
         return csvReader.readCsv();
@@ -58,5 +61,11 @@ public class StockService {
     }
     public String getLiveStockData(String symbol) {
         return stockApiClient.fetchDailyStockData(symbol);
+    }
+    public List<StockPrice> getExternalStockPrices(String symbol) {
+        String jsonData = stockApiClient.fetchDailyStockData(symbol);
+        //1. Gọi StickApiClient để lấy dữ liệu JSON String từ API bên ngoài.
+        //2. Gọi StockJsonParser để chuyển đổi dữ liệu JSON String thành danh sách các đối tượng StockPrice.
+        return stockJsonParser.parseDailyStockPrices(jsonData);
     }
 }

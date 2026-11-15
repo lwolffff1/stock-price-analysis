@@ -56,4 +56,8 @@ public class StockController {
     public String getExternalStock(@RequestParam String symbol) {
         return stockService.getLiveStockData(symbol);
     }
+    @GetMapping ("/api/stocks/external-prices")
+    public List<StockPrice> getExternalStockPrices(@RequestParam String symbol) {
+        return stockService.getExternalStockPrices(symbol);
+    }
 }
